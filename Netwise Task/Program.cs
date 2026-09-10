@@ -7,6 +7,7 @@ var catFactsBaseUrl = builder.Configuration["CatFacts:BaseUrl"]
 var catFactsBaseUri = new Uri(catFactsBaseUrl, UriKind.Absolute);
 
 builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services.AddCatFactStorage(builder.Configuration);
 builder.Services.AddScoped<ICatFactService, CatFactService>();
