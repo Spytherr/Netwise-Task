@@ -3,15 +3,15 @@ using Microsoft.Extensions.Options;
 
 namespace Netwise_Task;
 
-public sealed class CatFactFileWriter : ICatFactFileWriter, IDisposable
+public sealed class FileCatFactStore : ICatFactStore, IDisposable
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
     private readonly SemaphoreSlim writeLock = new(1, 1);
     private readonly string filePath;
 
-    public CatFactFileWriter(IOptions<CatFactOptions> options, IHostEnvironment environment)
+    public FileCatFactStore(IOptions<CatFactStorageOptions> options, IHostEnvironment environment)
     {
-        filePath = Path.GetFullPath(options.Value.FilePath, environment.ContentRootPath);
+        filePath = Path.GetFullPath(options.Value.File.Path, environment.ContentRootPath);
 
         var directoryPath = Path.GetDirectoryName(filePath);
         if (directoryPath is not null)

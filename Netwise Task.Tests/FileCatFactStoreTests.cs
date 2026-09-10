@@ -6,7 +6,7 @@ using Netwise_Task;
 
 namespace Netwise_Task.Tests;
 
-public class CatFactFileWriterTests
+public class FileCatFactStoreTests
 {
     [Fact]
     public async Task AppendAsync_ShouldCreateFileAndWriteEachFactOnNewLine()
@@ -14,10 +14,13 @@ public class CatFactFileWriterTests
         var contentRootPath = Path.Combine(Path.GetTempPath(), $"netwise-task-{Guid.NewGuid():N}");
         var relativeFilePath = Path.Combine("Data", "cat-facts.txt");
         var fullFilePath = Path.Combine(contentRootPath, relativeFilePath);
-        var options = Options.Create(new CatFactOptions
+        var options = Options.Create(new CatFactStorageOptions
         {
-            BaseUrl = "https://catfact.ninja/",
-            FilePath = relativeFilePath
+            Provider = CatFactStorageProvider.File,
+            File = new FileCatFactStorageOptions
+            {
+                Path = relativeFilePath
+            }
         });
         var environment = new TestHostEnvironment(contentRootPath);
         var firstFact = new CatFactDto("First fact", 10);
@@ -25,10 +28,10 @@ public class CatFactFileWriterTests
 
         try
         {
-            using (var writer = new CatFactFileWriter(options, environment))
+            using (var store = new FileCatFactStore(options, environment))
             {
-                await writer.AppendAsync(firstFact, CancellationToken.None);
-                await writer.AppendAsync(secondFact, CancellationToken.None);
+                await store.AppendAsync(firstFact, CancellationToken.None);
+                await store.AppendAsync(secondFact, CancellationToken.None);
             }
 
             var lines = await File.ReadAllLinesAsync(fullFilePath);

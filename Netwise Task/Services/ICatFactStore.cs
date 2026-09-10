@@ -1,6 +1,6 @@
 namespace Netwise_Task;
 
-public interface ICatFactFileWriter
+public interface ICatFactStore
 {
     Task AppendAsync(CatFactDto catFact, CancellationToken cancellationToken);
 }

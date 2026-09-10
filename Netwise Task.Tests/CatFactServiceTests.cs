@@ -9,13 +9,13 @@ public class CatFactServiceTests
     {
         var expectedFact = new CatFactDto("Cats have five toes on their front paws.", 40);
         var client = new StubCatFactClient(expectedFact);
-        var writer = new RecordingCatFactFileWriter();
-        var service = new CatFactService(client, writer);
+        var store = new RecordingCatFactStore();
+        var service = new CatFactService(client, store);
 
         var result = await service.GetAndSaveAsync(CancellationToken.None);
 
         Assert.Same(expectedFact, result);
-        Assert.Same(expectedFact, writer.SavedFact);
+        Assert.Same(expectedFact, store.SavedFact);
     }
 
     private sealed class StubCatFactClient(CatFactDto catFact) : ICatFactClient
@@ -26,7 +26,7 @@ public class CatFactServiceTests
         }
     }
 
-    private sealed class RecordingCatFactFileWriter : ICatFactFileWriter
+    private sealed class RecordingCatFactStore : ICatFactStore
     {
         public CatFactDto? SavedFact { get; private set; }
 
